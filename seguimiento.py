@@ -184,7 +184,7 @@ if seleccionados:
 
         # Líneas entre pasos
         for i in range(len(estados) - 1):
-            color = "green" if i < estado_actual else "lightgray"
+            color = "#4DB6AC" if i < estado_actual else "lightgray"
             fig.add_trace(go.Scatter(
                 x=[x_vals[i], x_vals[i+1]], y=[y_val, y_val],
                 mode="lines",
