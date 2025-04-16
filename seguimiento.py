@@ -344,6 +344,36 @@ if curso_seleccionado:
         st.plotly_chart(fig)
 
 
+import streamlit as st
+
+st.title("🛠️ Editor de Estados por Curso")
+
+# Datos simulados para un curso
+curso = "HTML Y CSS"
+pasos = [
+    "Diseño", "Autorización INAP", "Carga SAI",
+    "Tramitación Expediente", "Dictamen INAP", "Creación Comisión"
+]
+
+# Estado actual simulado (esto podría venir de Sheets)
+estado_actual = {
+    paso: False for paso in pasos
+}
+
+# Mostrar checkboxes
+st.subheader(f"📘 {curso} – Aprobación Actividad")
+nuevos_estados = {}
+for paso in pasos:
+    nuevos_estados[paso] = st.checkbox(paso, value=estado_actual[paso])
+
+# Botón para guardar cambios
+if st.button("💾 Guardar cambios"):
+    estado_actual.update(nuevos_estados)
+    st.success("Cambios guardados.")
+    st.write("Nuevo estado:")
+    st.json(estado_actual)
+
+
 
 
 
