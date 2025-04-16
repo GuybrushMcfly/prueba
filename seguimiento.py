@@ -230,7 +230,7 @@ if seleccionados:
             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.4, 1.2]),
             height=220,
-            margin=dict(l=20, r=20, t=20, b=20),
+            margin=dict(l=30, r=30, t=30, b=30),
         )
 
         st.plotly_chart(fig)
