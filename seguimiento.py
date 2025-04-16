@@ -229,9 +229,10 @@ if seleccionados:
             title=dict(text=f"📘 {curso}", x=0.02, xanchor="left", font=dict(size=18)),
             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.4, 1.2]),
-            height=250,
-            margin=dict(l=40, r=40, t=40, b=20),
+            height=220,
+            margin=dict(l=20, r=20, t=20, b=20),
         )
+
         st.plotly_chart(fig)
 else:
     st.info("Seleccioná hasta 5 cursos para visualizar su progreso.")
