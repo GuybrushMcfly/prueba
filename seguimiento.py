@@ -104,7 +104,7 @@ elif opcion == "Gráfico 3: Estilo Stepper UI":
         fig3.add_trace(go.Scatter(
             x=[x_vals[i], x_vals[i+1]], y=[y_val, y_val],
             mode="lines",
-            line=dict(color=color, width=10),
+            line=dict(color=color, width=8),
             showlegend=False
         ))
 
@@ -122,26 +122,27 @@ elif opcion == "Gráfico 3: Estilo Stepper UI":
         fig3.add_trace(go.Scatter(
             x=[x_vals[i]], y=[y_val],
             mode="markers+text",
-            marker=dict(size=60, color=color),
+            marker=dict(size=40, color=color),
             text=[str(i+1)],
             textposition="middle center",
-            textfont=dict(color="white", size=20),
+            textfont=dict(color="white", size=16),
             showlegend=False
         ))
 
         fig3.add_trace(go.Scatter(
-            x=[x_vals[i]], y=[y_val - 0.3],
+            x=[x_vals[i]], y=[y_val - 0.15],  # más cerca del círculo
             mode="text",
             text=[label],
             textposition="bottom center",
-            textfont=dict(size=14, color=text_color),
+            textfont=dict(size=13, color=text_color),
             showlegend=False
         ))
 
     fig3.update_layout(
         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        height=200,
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.4, 1.2]),
+        height=250,
         margin=dict(l=40, r=40, t=20, b=20),
     )
     st.plotly_chart(fig3)
+
