@@ -195,10 +195,12 @@ if seleccionados:
         # Círculos y textos
         for i, label in enumerate(estados):
             if i < estado_actual:
-                color = "green"
+                #color = "green"
+                color = "#AAEDEF"
                 text_color = "white"
             elif i == estado_actual:
-                color = "deepskyblue"
+                #color = "deepskyblue"
+                color = "#EFACAA"
                 text_color = "white"
             else:
                 color = "lightgray"
