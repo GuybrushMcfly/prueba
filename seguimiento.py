@@ -241,9 +241,10 @@ else:
 
 
 
-import random
 import streamlit as st
 import plotly.graph_objects as go
+
+st.set_page_config(page_title="Seguimiento de Cursos", layout="wide")
 
 st.header("📘 ESTADO DE CURSOS POR PROCESO")
 
@@ -254,26 +255,38 @@ curso_seleccionado = st.selectbox("Seleccioná una actividad:", cursos)
 # Procesos y sus pasos
 procesos = {
     "APROBACION ACTIVIDAD": [
-        "Diseño", "Autorización<br> INAP", "Carga SAI", "Tramitación<br> Expediente",
-        "Dictamen<br> INAP"
+        "Diseño", "Autorización INAP", "Carga SAI", "Tramitación Expediente", "Dictamen INAP"
     ],
     "CAMPUS": [
-        "Armado Aula", "Matriculación<br> participantes", "Apertura Curso",
-        "Cierre Curso", "Entrega Notas<br> y Asistencia"
+        "Armado Aula", "Matriculación participantes", "Apertura Curso", "Cierre Curso", "Entrega Notas y Asistencia"
     ],
     "DICTADO COMISION": [
-        "Difusión", "Asignación<br> Vacantes", "Cursada",
-        "Asistencia<br> y Evaluación", "Créditos SAI", "Liquidación"
+        "Difusión", "Asignación Vacantes", "Cursada", "Asistencia y Evaluación", "Créditos SAI", "Liquidación"
     ]
 }
 
-# Simular estados actuales por proceso
-estado_actual_procesos = {
-    nombre: random.randint(0, len(pasos) - 1)
-    for nombre, pasos in procesos.items()
-}
+# Estados iniciales simulados
+if "estados_curso" not in st.session_state:
+    st.session_state.estados_curso = {
+        curso: {
+            proceso: {paso: False for paso in pasos}
+            for proceso, pasos in procesos.items()
+        } for curso in cursos
+    }
 
-# Colores e íconos
+# 🛠️ Editar los estados con checkboxes
+st.markdown("### 🛠️ Editar estados por proceso")
+for proceso, pasos in procesos.items():
+    st.subheader(f"📘 {curso_seleccionado} – {proceso}")
+    for paso in pasos:
+        estado = st.session_state.estados_curso[curso_seleccionado][proceso][paso]
+        nuevo_estado = st.checkbox(paso, value=estado, key=f"{curso_seleccionado}_{proceso}_{paso}")
+        st.session_state.estados_curso[curso_seleccionado][proceso][paso] = nuevo_estado
+
+# 📊 Gráficos de progreso por proceso
+st.markdown("---")
+st.markdown("### 📊 Visualización del avance")
+
 color_completado = "#4DB6AC"
 color_actual = "#FF8A65"
 color_pendiente = "#D3D3D3"
@@ -283,96 +296,69 @@ icono = {
     "pendiente": "⚪"
 }
 
-if curso_seleccionado:
-    for nombre_proceso, pasos in procesos.items():
-        x_vals = list(range(len(pasos)))
-        y_val = 1
-        estado_actual = estado_actual_procesos[nombre_proceso]
+for nombre_proceso, pasos in procesos.items():
+    x_vals = list(range(len(pasos)))
+    y_val = 1
 
-        fig = go.Figure()
+    estados = st.session_state.estados_curso[curso_seleccionado][nombre_proceso]
+    if all(estados[paso] for paso in pasos):
+        estado_actual = len(pasos)
+    else:
+        estado_actual = next(i for i, paso in enumerate(pasos) if not estados[paso])
 
-        # Líneas
-        for i in range(len(pasos) - 1):
-            color = color_completado if i < estado_actual else color_pendiente
-            fig.add_trace(go.Scatter(
-                x=[x_vals[i], x_vals[i+1]], y=[y_val, y_val],
-                mode="lines",
-                line=dict(color=color, width=8),
-                showlegend=False
-            ))
+    fig = go.Figure()
 
-        # Círculos y etiquetas
-        for i, paso in enumerate(pasos):
-            if i < estado_actual:
-                color = color_completado
-                icon = icono["finalizado"]
-            elif i == estado_actual:
-                color = color_actual
-                icon = icono["actual"]
-            else:
-                color = color_pendiente
-                icon = icono["pendiente"]
+    # Líneas entre pasos
+    for i in range(len(pasos) - 1):
+        color = color_completado if i < estado_actual else color_pendiente
+        fig.add_trace(go.Scatter(
+            x=[x_vals[i], x_vals[i + 1]], y=[y_val, y_val],
+            mode="lines",
+            line=dict(color=color, width=8),
+            showlegend=False
+        ))
 
-            fig.add_trace(go.Scatter(
-                x=[x_vals[i]], y=[y_val],
-                mode="markers+text",
-                marker=dict(size=45, color=color),
-                text=[icon],
-                textposition="middle center",
-                textfont=dict(color="white", size=18),
-                hovertext=[paso],
-                hoverinfo="text",
-                showlegend=False
-            ))
+    # Círculos y texto
+    for i, paso in enumerate(pasos):
+        if i < estado_actual:
+            color = color_completado
+            icon = icono["finalizado"]
+        elif i == estado_actual:
+            color = color_actual
+            icon = icono["actual"]
+        else:
+            color = color_pendiente
+            icon = icono["pendiente"]
 
-            fig.add_trace(go.Scatter(
-                x=[x_vals[i]], y=[y_val - 0.15],
-                mode="text",
-                text=[paso],
-                textposition="bottom center",
-                textfont=dict(size=13, color="white"),
-                showlegend=False
-            ))
+        fig.add_trace(go.Scatter(
+            x=[x_vals[i]], y=[y_val],
+            mode="markers+text",
+            marker=dict(size=45, color=color),
+            text=[icon],
+            textposition="middle center",
+            textfont=dict(color="white", size=18),
+            hovertext=[paso],
+            hoverinfo="text",
+            showlegend=False
+        ))
 
-        fig.update_layout(
-            title=dict(text=f"🔹 {nombre_proceso}", x=0.01, xanchor="left", font=dict(size=17)),
-            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.3, 1.2]),
-            height=180,
-            margin=dict(l=20, r=20, t=30, b=0),
-        )
-        st.plotly_chart(fig)
+        fig.add_trace(go.Scatter(
+            x=[x_vals[i]], y=[y_val - 0.15],
+            mode="text",
+            text=[paso],
+            textposition="bottom center",
+            textfont=dict(size=13, color="white"),
+            showlegend=False
+        ))
 
-
-import streamlit as st
-
-st.title("🛠️ Editor de Estados por Curso")
-
-# Datos simulados para un curso
-curso = "HTML Y CSS"
-pasos = [
-    "Diseño", "Autorización INAP", "Carga SAI",
-    "Tramitación Expediente", "Dictamen INAP", "Creación Comisión"
-]
-
-# Estado actual simulado (esto podría venir de Sheets)
-estado_actual = {
-    paso: False for paso in pasos
-}
-
-# Mostrar checkboxes
-st.subheader(f"📘 {curso} – Aprobación Actividad")
-nuevos_estados = {}
-for paso in pasos:
-    nuevos_estados[paso] = st.checkbox(paso, value=estado_actual[paso])
-
-# Botón para guardar cambios
-if st.button("💾 Guardar cambios"):
-    estado_actual.update(nuevos_estados)
-    st.success("Cambios guardados.")
-    st.write("Nuevo estado:")
-    st.json(estado_actual)
-
+    fig.update_layout(
+        title=dict(text=f"🔹 {nombre_proceso}", x=0.01, xanchor="left", font=dict(size=17)),
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.3, 1.2]),
+        height=180,
+        margin=dict(l=20, r=20, t=30, b=0),
+    )
+    st.plotly_chart(fig)
 
 
 
