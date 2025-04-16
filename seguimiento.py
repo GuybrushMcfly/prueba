@@ -273,10 +273,15 @@ estado_actual_procesos = {
     for nombre, pasos in procesos.items()
 }
 
-# Colores
+# Colores e íconos
 color_completado = "#4DB6AC"
 color_actual = "#FF8A65"
 color_pendiente = "#D3D3D3"
+icono = {
+    "finalizado": "⚪",
+    "actual": "⏳",
+    "pendiente": "⚪"
+}
 
 if curso_seleccionado:
     for nombre_proceso, pasos in procesos.items():
@@ -300,21 +305,21 @@ if curso_seleccionado:
         for i, paso in enumerate(pasos):
             if i < estado_actual:
                 color = color_completado
-                text_color = "white"
+                icon = icono["finalizado"]
             elif i == estado_actual:
                 color = color_actual
-                text_color = "white"
+                icon = icono["actual"]
             else:
                 color = color_pendiente
-                text_color = "white"
+                icon = icono["pendiente"]
 
             fig.add_trace(go.Scatter(
                 x=[x_vals[i]], y=[y_val],
                 mode="markers+text",
                 marker=dict(size=45, color=color),
-                text=[str(i+1)],
+                text=[icon],
                 textposition="middle center",
-                textfont=dict(color="white", size=16),
+                textfont=dict(color="white", size=20),
                 hovertext=[paso],
                 hoverinfo="text",
                 showlegend=False
@@ -325,7 +330,7 @@ if curso_seleccionado:
                 mode="text",
                 text=[paso],
                 textposition="bottom center",
-                textfont=dict(size=13, color=text_color),
+                textfont=dict(size=13, color="white"),
                 showlegend=False
             ))
 
@@ -337,7 +342,6 @@ if curso_seleccionado:
             margin=dict(l=20, r=20, t=30, b=0),
         )
         st.plotly_chart(fig)
-
 
 
 
