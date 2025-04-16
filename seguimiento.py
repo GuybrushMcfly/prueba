@@ -333,7 +333,7 @@ if curso_seleccionado:
             title=dict(text=f"🔹 {nombre_proceso}", x=0.01, xanchor="left", font=dict(size=17)),
             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.3, 1.2]),
-            height=200,
+            height=180,
             margin=dict(l=20, r=20, t=30, b=0),
         )
         st.plotly_chart(fig)
