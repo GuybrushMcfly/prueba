@@ -338,3 +338,105 @@ if curso_seleccionado:
         )
         st.plotly_chart(fig)
 
+
+
+
+
+
+import pandas as pd
+
+st.header("🗂️ ESTADO DINÁMICO DESDE EXCEL (SIMULADO)")
+
+# Cursos disponibles
+cursos = ["HTML Y CSS", "INTRODUCCIÓN A R", "ENCUESTADORES IPC"]
+curso_seleccionado = st.selectbox("Seleccioná un curso:", cursos)
+
+# Simulación de Excel
+datos_excel = pd.DataFrame({
+    "Curso": ["HTML Y CSS", "HTML Y CSS", "HTML Y CSS"],
+    "Paso": ["Diseño", "Autorización INAP", "Carga SAI"],
+    "Estado": ["SI", "", ""]
+})
+
+# Pasos del proceso
+pasos = ["Diseño", "Autorización INAP", "Carga SAI", "Tramitación Expediente"]
+
+# Colores + íconos
+color_completado = "#4DB6AC"
+color_actual = "#FF8A65"
+color_pendiente = "#D3D3D3"
+icono = {"completado": "✅", "actual": "⏳", "pendiente": "⚪"}
+
+# Determinar estados
+estados = []
+for paso in pasos:
+    fila = datos_excel[(datos_excel["Curso"] == curso_seleccionado) & (datos_excel["Paso"] == paso)]
+    estados.append("SI" if not fila.empty and fila.iloc[0]["Estado"] == "SI" else "")
+
+visual = []
+siguiente = True
+for estado in estados:
+    if estado == "SI":
+        visual.append("completado")
+    elif siguiente:
+        visual.append("actual")
+        siguiente = False
+    else:
+        visual.append("pendiente")
+
+# Mostrar gráfico
+x_vals = list(range(len(pasos)))
+y_val = 1
+
+fig = go.Figure()
+
+# Líneas
+for i in range(len(pasos) - 1):
+    col = color_completado if visual[i] == "completado" else color_pendiente
+    fig.add_trace(go.Scatter(
+        x=[x_vals[i], x_vals[i+1]], y=[y_val, y_val],
+        mode="lines",
+        line=dict(color=col, width=8),
+        showlegend=False
+    ))
+
+# Puntos
+for i, paso in enumerate(pasos):
+    estado = visual[i]
+    col = {
+        "completado": color_completado,
+        "actual": color_actual,
+        "pendiente": color_pendiente
+    }[estado]
+
+    fig.add_trace(go.Scatter(
+        x=[x_vals[i]], y=[y_val],
+        mode="markers+text",
+        marker=dict(size=45, color=col),
+        text=[icono[estado]],
+        textposition="middle center",
+        textfont=dict(color="white", size=16),
+        hovertext=[paso],
+        hoverinfo="text",
+        showlegend=False
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=[x_vals[i]], y=[y_val - 0.15],
+        mode="text",
+        text=[paso],
+        textposition="bottom center",
+        textfont=dict(size=13, color="white"),
+        showlegend=False
+    ))
+
+fig.update_layout(
+    title=dict(text="🔹 APROBACIÓN ACTIVIDAD", x=0.01, xanchor="left", font=dict(size=17)),
+    xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+    yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.3, 1.2]),
+    height=200,
+    margin=dict(l=20, r=20, t=30, b=0),
+)
+
+st.plotly_chart(fig)
+
