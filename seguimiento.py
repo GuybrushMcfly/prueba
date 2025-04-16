@@ -139,13 +139,14 @@ for i, label in enumerate(etapas):
 
     fig.add_trace(go.Scatter(
         x=[x_vals[i]], y=[y_val],
-        mode="markers+text+customdata",
+        mode="markers+text",  # <- Corregido
         marker=dict(size=60, color=color),
         text=[str(i+1)],
         textposition="middle center",
         customdata=[[label]],
         textfont=dict(color="white", size=20),
         showlegend=False
+       
     ))
 
     # Texto debajo
@@ -167,5 +168,7 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig)
+
+
 
 
