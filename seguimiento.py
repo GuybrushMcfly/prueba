@@ -154,3 +154,83 @@ elif opcion == "Gráfico 3: Estilo Stepper UI":
         margin=dict(l=40, r=40, t=20, b=20),
     )
     st.plotly_chart(fig3)
+
+
+import random
+
+st.header("📌 PRUEBA DE ESTADOS DE CURSOS")
+
+# Cursos disponibles
+cursos_disponibles = [f"CURSO{i}" for i in range(1, 9)]
+estados = ["Preparación", "Cursada", "Asistencia y Evaluación", "Liquidación", "Finalizado"]
+
+# Multiselect con límite de 5
+seleccionados = st.multiselect(
+    "Seleccioná hasta 5 cursos para visualizar su progreso:",
+    cursos_disponibles,
+    max_selections=5
+)
+
+if seleccionados:
+    st.markdown("---")
+    for curso in seleccionados:
+        # Estado aleatorio (0-indexado)
+        estado_actual = random.randint(0, len(estados) - 1)
+
+        x_vals = list(range(len(estados)))
+        y_val = 1
+
+        fig = go.Figure()
+
+        # Líneas entre pasos
+        for i in range(len(estados) - 1):
+            color = "green" if i < estado_actual else "lightgray"
+            fig.add_trace(go.Scatter(
+                x=[x_vals[i], x_vals[i+1]], y=[y_val, y_val],
+                mode="lines",
+                line=dict(color=color, width=8),
+                showlegend=False
+            ))
+
+        # Círculos y textos
+        for i, label in enumerate(estados):
+            if i < estado_actual:
+                color = "green"
+                text_color = "white"
+            elif i == estado_actual:
+                color = "deepskyblue"
+                text_color = "white"
+            else:
+                color = "lightgray"
+                text_color = "white"
+
+            fig.add_trace(go.Scatter(
+                x=[x_vals[i]], y=[y_val],
+                mode="markers+text",
+                marker=dict(size=45, color=color),
+                text=[str(i+1)],
+                textposition="middle center",
+                textfont=dict(color="white", size=16),
+                showlegend=False
+            ))
+
+            fig.add_trace(go.Scatter(
+                x=[x_vals[i]], y=[y_val - 0.15],
+                mode="text",
+                text=[label],
+                textposition="bottom center",
+                textfont=dict(size=13, color=text_color),
+                showlegend=False
+            ))
+
+        fig.update_layout(
+            title=dict(text=f"📘 {curso}", x=0.02, xanchor="left", font=dict(size=18)),
+            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.4, 1.2]),
+            height=250,
+            margin=dict(l=40, r=40, t=40, b=20),
+        )
+        st.plotly_chart(fig)
+else:
+    st.info("Seleccioná hasta 5 cursos para visualizar su progreso.")
+
