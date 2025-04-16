@@ -319,7 +319,7 @@ if curso_seleccionado:
                 marker=dict(size=45, color=color),
                 text=[icon],
                 textposition="middle center",
-                textfont=dict(color="white", size=20),
+                textfont=dict(color="white", size=18),
                 hovertext=[paso],
                 hoverinfo="text",
                 showlegend=False
