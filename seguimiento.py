@@ -229,7 +229,7 @@ if seleccionados:
             title=dict(text=f"📘 {curso}", x=0.02, xanchor="left", font=dict(size=18)),
             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.4, 1.2]),
-            height=220,
+            height=180,
             margin=dict(l=30, r=30, t=30, b=30),
         )
 
