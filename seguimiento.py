@@ -254,16 +254,16 @@ curso_seleccionado = st.selectbox("Seleccioná una actividad:", cursos)
 # Procesos y sus pasos
 procesos = {
     "APROBACION ACTIVIDAD": [
-        "Diseño", "Autorización INAP", "Carga SAI", "Tramitación Expediente",
-        "Dictamen INAP", "Creación Comisión"
+        "Diseño", "Autorización<br> INAP", "Carga SAI", "Tramitación<br> Expediente",
+        "Dictamen<br> INAP", "Creación Comisión"
     ],
     "CAMPUS": [
-        "Armado Aula", "Matriculación participantes", "Apertura Curso",
-        "Cierre Curso", "Notas y Asistencia"
+        "Armado Aula", "Matriculación<br> participantes", "Apertura Curso",
+        "Cierre Curso", "Entrega Notas<br> y Asistencia"
     ],
     "DICTADO COMISION": [
-        "Difusión", "Asignación Vacantes", "Cursada",
-        "Evaluación y Carga SAI", "Liquidación", "Finalizado"
+        "Difusión", "Asignación<br> Vacantes", "Cursada",
+        "Evaluación<br> y Carga SAI", "Liquidación", "Finalizado"
     ]
 }
 
