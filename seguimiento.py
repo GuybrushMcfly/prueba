@@ -237,3 +237,102 @@ if seleccionados:
 else:
     st.info("Seleccioná hasta 5 cursos para visualizar su progreso.")
 
+
+
+import random
+import streamlit as st
+import plotly.graph_objects as go
+
+st.header("📘 ESTADO DE CURSOS POR PROCESO")
+
+# Cursos disponibles
+cursos = ["HTML Y CSS", "INTRODUCCIÓN A R", "ENCUESTADORES IPC"]
+curso_seleccionado = st.selectbox("Seleccioná una actividad:", cursos)
+
+# Procesos y sus pasos
+procesos = {
+    "APROBACION ACTIVIDAD": [
+        "Diseño", "Autorización INAP", "Carga SAI", "Tramitación Expediente",
+        "Dictamen INAP", "Creación Comisión"
+    ],
+    "CAMPUS": [
+        "Armado Aula", "Matriculación participantes", "Apertura Curso",
+        "Cierre Curso", "Notas y Asistencia"
+    ],
+    "DICTADO COMISION": [
+        "Difusión", "Asignación Vacantes", "Cursada",
+        "Evaluación y Carga SAI", "Liquidación", "Finalizado"
+    ]
+}
+
+# Simular estados actuales por proceso
+estado_actual_procesos = {
+    nombre: random.randint(0, len(pasos) - 1)
+    for nombre, pasos in procesos.items()
+}
+
+# Colores
+color_completado = "#4DB6AC"
+color_actual = "#FF8A65"
+color_pendiente = "#D3D3D3"
+
+if curso_seleccionado:
+    for nombre_proceso, pasos in procesos.items():
+        x_vals = list(range(len(pasos)))
+        y_val = 1
+        estado_actual = estado_actual_procesos[nombre_proceso]
+
+        fig = go.Figure()
+
+        # Líneas
+        for i in range(len(pasos) - 1):
+            color = color_completado if i < estado_actual else color_pendiente
+            fig.add_trace(go.Scatter(
+                x=[x_vals[i], x_vals[i+1]], y=[y_val, y_val],
+                mode="lines",
+                line=dict(color=color, width=8),
+                showlegend=False
+            ))
+
+        # Círculos y etiquetas
+        for i, paso in enumerate(pasos):
+            if i < estado_actual:
+                color = color_completado
+                text_color = "white"
+            elif i == estado_actual:
+                color = color_actual
+                text_color = "white"
+            else:
+                color = color_pendiente
+                text_color = "white"
+
+            fig.add_trace(go.Scatter(
+                x=[x_vals[i]], y=[y_val],
+                mode="markers+text",
+                marker=dict(size=45, color=color),
+                text=[str(i+1)],
+                textposition="middle center",
+                textfont=dict(color="white", size=16),
+                hovertext=[paso],
+                hoverinfo="text",
+                showlegend=False
+            ))
+
+            fig.add_trace(go.Scatter(
+                x=[x_vals[i]], y=[y_val - 0.15],
+                mode="text",
+                text=[paso],
+                textposition="bottom center",
+                textfont=dict(size=13, color=text_color),
+                showlegend=False
+            ))
+
+        fig.update_layout(
+            title=dict(text=f"🔹 {nombre_proceso}", x=0.01, xanchor="left", font=dict(size=17)),
+            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[0.3, 1.2]),
+            height=200,
+            margin=dict(l=20, r=20, t=30, b=0),
+        )
+        st.plotly_chart(fig)
+
