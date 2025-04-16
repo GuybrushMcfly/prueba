@@ -100,3 +100,72 @@ fig.update_layout(
 
 st.plotly_chart(fig)
 
+
+import streamlit as st
+import plotly.graph_objects as go
+
+# Etapas del proceso
+etapas = ["Create Account", "Login", "Payment", "Confirm"]
+estado_actual = 2  # índice 0-indexado (0=primero, 3=último)
+
+# Posición horizontal de cada etapa
+x_vals = list(range(len(etapas)))
+y_val = 1
+
+# Crear figura
+fig = go.Figure()
+
+# Líneas entre los pasos
+for i in range(len(etapas) - 1):
+    color = "limegreen" if i < estado_actual else "lightgray"
+    fig.add_trace(go.Scatter(
+        x=[x_vals[i], x_vals[i+1]], y=[y_val, y_val],
+        mode="lines",
+        line=dict(color=color, width=10),
+        showlegend=False
+    ))
+
+# Círculos y textos
+for i, label in enumerate(etapas):
+    if i < estado_actual:
+        color = "limegreen"
+        text_color = "green"
+    elif i == estado_actual:
+        color = "deepskyblue"
+        text_color = "blue"
+    else:
+        color = "lightgray"
+        text_color = "gray"
+
+    fig.add_trace(go.Scatter(
+        x=[x_vals[i]], y=[y_val],
+        mode="markers+text+customdata",
+        marker=dict(size=60, color=color),
+        text=[str(i+1)],
+        textposition="middle center",
+        customdata=[[label]],
+        textfont=dict(color="white", size=20),
+        showlegend=False
+    ))
+
+    # Texto debajo
+    fig.add_trace(go.Scatter(
+        x=[x_vals[i]], y=[y_val - 0.3],
+        mode="text",
+        text=[label],
+        textposition="bottom center",
+        textfont=dict(size=14, color=text_color),
+        showlegend=False
+    ))
+
+# Ajustes de layout
+fig.update_layout(
+    xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+    yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+    height=200,
+    margin=dict(l=40, r=40, t=20, b=20),
+)
+
+st.plotly_chart(fig)
+
+
